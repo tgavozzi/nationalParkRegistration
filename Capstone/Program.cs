@@ -11,7 +11,8 @@ namespace Capstone
     {
         static void Main(string[] args)
         {
-            
+            NationalParkCLI test = new NationalParkCLI();
+                test.Run();
         }
     }
 }
