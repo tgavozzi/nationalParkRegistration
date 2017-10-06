@@ -6,12 +6,14 @@ using System.Threading.Tasks;
 using RecipeManager.CLI;
 using Capstone.Models;
 using Capstone.DAL;
+using System.Globalization;
 
 namespace Capstone
 {
     public class NationalParkCLI
     {
         private string connectionString = @"Data Source=.\SQLExpress;Initial Catalog=Campground;User ID=te_student;Password=sqlserver1";
+        private decimal campgroundPrice;
 
         public void Run()
         {
@@ -90,11 +92,11 @@ ________   ________  _________  ___  ________  ________   ________  ___         
                 Console.WriteLine("Campground_Id " + c.Campground_id);
                 Console.WriteLine("Park ID: " + c.Park_id);
                 Console.WriteLine("Campground Name: " + c.Name);
-                Console.WriteLine("Campground is open from " + c.Open_from_mm);
-                Console.WriteLine("Campground closes at " + c.Open_to_mm);
-                Console.WriteLine("The daily fee for this site is " + c.Daily_fee.ToString("C"));
+                Console.WriteLine("Campground is open from " + CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(c.Open_from_mm));
+                Console.WriteLine("Campground closes at " + CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(c.Open_to_mm));
+                Console.WriteLine("Campground daily cost: " + c.Daily_fee.ToString("C"));
             }
-
+            
             Console.ReadLine();
             Console.WriteLine("Would you like to book  one of these sites? (Y/N)");
             string input = Console.ReadLine().ToUpper();
@@ -140,11 +142,19 @@ ________   ________  _________  ___  ________  ________   ________  ___         
                     Console.WriteLine("Utilities are available " + s.Utilities);
                 }
 
+                ReservationSqlDAL ral = new ReservationSqlDAL(connectionString);
+
+                campgroundPrice = (ral.CostOfCampground(campgroundId) * (toDate.DayOfYear - fromDate.DayOfYear));
+
+                Console.WriteLine("The total fee for these sites are: " + campgroundPrice.ToString("C"));
+                Console.WriteLine();
+
                 int campSiteInput = CLIHelper.GetInteger("What Camp site are you booking for?");
+                Console.WriteLine();
 
                 string nameInput = CLIHelper.GetString("What name should the reservation be under?");
+                Console.WriteLine();
 
-                ReservationSqlDAL ral = new ReservationSqlDAL(connectionString);
                 DateTime createDate = DateTime.Now;
                 int wasReservationSuccessful = ral.MakeReservations(campSiteInput, nameInput, fromDate, toDate, createDate);
 

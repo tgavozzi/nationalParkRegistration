@@ -8,25 +8,19 @@ using System.Data.SqlClient;
 
 namespace Capstone.DAL
 {
-   public class SiteSqlDAL
+    public class SiteSqlDAL
     {
-        //show if campsite is or is not avail.
-        //top 5 avail capsites along with cost for total stay
-
         private string connectionString;
 
         public SiteSqlDAL(string connectionString)
         {
             this.connectionString = connectionString;
         }
-        
-
-        
-        public List<Site> checkList = new List<Site>();
-
 
         public List<Site> CampsiteAvailability(int campgroundId, DateTime fromDate, DateTime toDate)
         {
+            List<Site> checkList = new List<Site>();
+
             try
             {
                 using (SqlConnection conn = new SqlConnection(connectionString))
@@ -38,35 +32,28 @@ namespace Capstone.DAL
                     cmd.Parameters.AddWithValue("@userFrom", fromDate);
                     cmd.Parameters.AddWithValue("@userTo", toDate);
                     cmd.Parameters.AddWithValue("@userCamp", campgroundId);
-                 
+
                     SqlDataReader reader = cmd.ExecuteReader();
                     while (reader.Read())
                     {
-                        
                         Site s = new Site();
                         s.SiteID = Convert.ToInt32(reader["site_id"]);
-                        s.CampgroundID = Convert.ToInt32(reader["campground_id"] );
+                        s.CampgroundID = Convert.ToInt32(reader["campground_id"]);
                         s.SiteNumber = Convert.ToInt32(reader["site_number"]);
                         s.MaxOccupancy = Convert.ToInt32(reader["max_occupancy"]);
                         s.Accessible = Convert.ToBoolean(reader["accessible"]);
-                        s.MaxRvLength= Convert.ToInt32(reader["max_rv_length"]);
+                        s.MaxRvLength = Convert.ToInt32(reader["max_rv_length"]);
                         s.Utilities = Convert.ToBoolean(reader["utilities"]);
                         checkList.Add(s);
                     }
-
-                    
                 }
             }
-            catch(SqlException)
+            catch (SqlException)
             {
                 throw;
             }
-           
 
             return checkList;
         }
-
-
-
     }
 }

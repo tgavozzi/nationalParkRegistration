@@ -11,6 +11,7 @@ namespace Capstone.DAL
     public class ReservationSqlDAL
     {
         private string connectionString;
+        private decimal dailyFee;
 
         public ReservationSqlDAL(string connectionString)
         {
@@ -44,8 +45,11 @@ namespace Capstone.DAL
                 throw;
             }
         }
-        public decimal CostOfStay(int campgroundId)
+
+        public decimal CostOfCampground(int campgroundId)
         {
+            
+
             try
             {
                 using (SqlConnection connect = new SqlConnection(connectionString))
@@ -55,14 +59,18 @@ namespace Capstone.DAL
                     SqlCommand command = new SqlCommand("SELECT campground.daily_fee FROM campground WHERE campground_id = @userCampId", connect);
                     command.Parameters.AddWithValue("@userCampId", campgroundId);
 
+                    SqlDataReader reader = command.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        dailyFee = Convert.ToDecimal(reader["daily_fee"]);
+                    }
                 }
-
             }
-            catch(SqlException ex)
+            catch (SqlException ex)
             {
                 throw;
             }
-            return 0.0M;
+            return dailyFee;
         }
     }
 }
