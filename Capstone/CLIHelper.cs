@@ -97,6 +97,29 @@ namespace RecipeManager.CLI
 
             return userInput;
         }
+        public static DateTime GetDateTime(string message)
+        {
+            string userInput = String.Empty;
+            DateTime dateTimeValue = DateTime.MinValue;
+            int numberOfAttempts = 0;
+
+            do
+            {
+                if (numberOfAttempts > 0)
+                {
+                    Console.WriteLine("Invalid input format. Please try again");
+                }
+
+                Console.Write(message + " ");
+                userInput = Console.ReadLine();
+                numberOfAttempts++;
+            }
+            while (!DateTime.TryParse(userInput, out dateTimeValue));
+
+            return dateTimeValue;
+
+
+        }
     }
 }
 

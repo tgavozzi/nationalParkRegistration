@@ -44,6 +44,7 @@ namespace Capstone.DAL
                         c.Daily_fee = Convert.ToInt32(reader["daily_fee"]);
 
                         output.Add(c);
+                       
                     }
                 }
             }

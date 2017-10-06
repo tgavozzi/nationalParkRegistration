@@ -38,6 +38,7 @@ ________   ________  _________  ___  ________  ________   ________  ___         
                     case "1":
                         ShowAllNationalParks();
                         break;
+
                 }
             }
         }
@@ -67,9 +68,8 @@ ________   ________  _________  ___  ________  ________   ________  ___         
             string input = Console.ReadLine().ToUpper();
             if(input == "Y")
             {
-                Console.WriteLine("Please select a Park ID");
-                string userInput = Console.ReadLine();
-                int userInputParkId = Convert.ToInt32(userInput);
+                int userInputParkId = CLIHelper.GetInteger("Please enter a Park Id");
+
                 ShowAllCampgroundInAPark(userInputParkId);
             }
             return;
@@ -91,11 +91,74 @@ ________   ________  _________  ___  ________  ________   ________  ___         
                 Console.WriteLine("Park ID: " + c.Park_id);
                 Console.WriteLine("Campground Name: " + c.Name);
                 Console.WriteLine("Campground is open from " + c.Open_from_mm);
-                Console.WriteLine("Campground closes " + c.Open_to_mm);
-                Console.WriteLine("The daily fee for this site is " + c.Daily_fee);
+                Console.WriteLine("Campground closes at " + c.Open_to_mm);
+                Console.WriteLine("The daily fee for this site is " + c.Daily_fee.ToString("C"));
             }
 
             Console.ReadLine();
+            Console.WriteLine("Would you like to book  one of these sites? (Y/N)");
+            string input = Console.ReadLine().ToUpper();
+            if (input == "Y")
+            {
+                int campgroundId = CLIHelper.GetInteger("Please select a Campground ID");
+  
+                Reservation(campgroundId);
+            }   
+            return;
+        }
+
+        private void Reservation(int campgroundId)
+        {
+            DateTime arrivalInput = CLIHelper.GetDateTime("What is your desired arrival date?(MM/DD/YYYY)");
+            DateTime fromDate = Convert.ToDateTime(arrivalInput);
+
+            DateTime departureInput = CLIHelper.GetDateTime("When would you like to leave?(MM/DD/YYYY)");
+            DateTime toDate = Convert.ToDateTime(departureInput);
+
+            Console.WriteLine("Showing available sites ");
+
+            SiteSqlDAL sal = new SiteSqlDAL(connectionString);
+            List<Site> allCampSites = sal.CampsiteAvailability(campgroundId, fromDate, toDate);
+
+            if (allCampSites.Count() <= 0)
+            {
+                Console.WriteLine("No available camp sites! Please make a new selection.");
+                return;
+            }
+            else
+            {
+
+                foreach (Site s in allCampSites)
+                {
+                    Console.WriteLine();
+                    Console.WriteLine("SiteId " + s.SiteID);
+                    Console.WriteLine("Campground_Id " + s.CampgroundID);
+                    Console.WriteLine("SiteNumber " + s.SiteNumber);
+                    Console.WriteLine("MaxOccupancy " + s.MaxOccupancy);
+                    Console.WriteLine("Handicap Accessible " + s.Accessible);
+                    Console.WriteLine("MaxRvLength " + s.MaxRvLength);
+                    Console.WriteLine("Utilities are available " + s.Utilities);
+                }
+
+                int campSiteInput = CLIHelper.GetInteger("What Camp site are you booking for?");
+
+                string nameInput = CLIHelper.GetString("What name should the reservation be under?");
+
+                ReservationSqlDAL ral = new ReservationSqlDAL(connectionString);
+                DateTime createDate = DateTime.Now;
+                int wasReservationSuccessful = ral.MakeReservations(campSiteInput, nameInput, fromDate, toDate, createDate);
+
+                if (wasReservationSuccessful > 0)
+                {
+                    Console.WriteLine("Success!");
+
+                    Console.WriteLine("Here is your conformation ID: " + wasReservationSuccessful);
+                }
+                else
+                {
+                    Console.WriteLine("Sorry but that site is alreaday booked. Please try again.");
+                }
+            }
         }
     }
 }
