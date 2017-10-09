@@ -97,6 +97,7 @@ namespace RecipeManager.CLI
 
             return userInput;
         }
+
         public static DateTime GetDateTime(string message)
         {
             string userInput = String.Empty;
@@ -117,8 +118,6 @@ namespace RecipeManager.CLI
             while (!DateTime.TryParse(userInput, out dateTimeValue));
 
             return dateTimeValue;
-
-
         }
     }
 }

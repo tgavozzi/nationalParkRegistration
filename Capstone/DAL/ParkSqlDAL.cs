@@ -42,7 +42,6 @@ namespace Capstone.DAL
                         p.Description = Convert.ToString(reader["description"]);
 
                         output.Add(p);
-                        
                     }
                 }
             }
@@ -50,7 +49,6 @@ namespace Capstone.DAL
             {
                 throw;
             }
-
             return output;
         }
     }

@@ -79,9 +79,37 @@ namespace Capstone.Tests
             List<Site> output = sal.CampsiteAvailability(fakeCampground, fakeFrom, fakeTo);
 
             Assert.IsFalse(output.Count < 1);
+        }
 
-            
+         [TestMethod]
+            public void GetAllCampgroundsTest()
+            {
+                int parkId;
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    conn.Open();
+                    SqlCommand cmd = new SqlCommand("INSERT INTO park VALUES ('fake park', 'fake location', '9/9/9999', 99, 99, 'fake description');", conn);
+                    cmd.ExecuteNonQuery();
 
+                    cmd = new SqlCommand("SELECT CAST(SCOPE_IDENTITY() as int);", conn);
+                    parkId = Convert.ToInt32(cmd.ExecuteScalar());
+                }
+
+                int campgroundId;
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    conn.Open();
+                    SqlCommand cmd = new SqlCommand($"INSERT INTO campground VALUES ({parkId}, 'fake campground', '1', '2', '99');", conn);
+                    cmd.ExecuteNonQuery();
+
+                    cmd = new SqlCommand("SELECT CAST(SCOPE_IDENTITY() as int);", conn);
+                    campgroundId = Convert.ToInt32(cmd.ExecuteScalar());
+
+                }
+
+                CampgroundSqlDAL dal = new CampgroundSqlDAL(connectionString);
+                List<Campground> campground = dal.GetAllCampgrounds(parkId);
+                CollectionAssert.Contains(campground, campgroundId);
         }
     }
 }

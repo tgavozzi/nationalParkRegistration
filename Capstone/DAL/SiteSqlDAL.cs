@@ -34,6 +34,7 @@ namespace Capstone.DAL
                     cmd.Parameters.AddWithValue("@userCamp", campgroundId);
 
                     SqlDataReader reader = cmd.ExecuteReader();
+
                     while (reader.Read())
                     {
                         Site s = new Site();
@@ -44,6 +45,7 @@ namespace Capstone.DAL
                         s.Accessible = Convert.ToBoolean(reader["accessible"]);
                         s.MaxRvLength = Convert.ToInt32(reader["max_rv_length"]);
                         s.Utilities = Convert.ToBoolean(reader["utilities"]);
+
                         checkList.Add(s);
                     }
                 }
@@ -52,7 +54,6 @@ namespace Capstone.DAL
             {
                 throw;
             }
-
             return checkList;
         }
     }

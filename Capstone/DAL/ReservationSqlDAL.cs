@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Capstone.Models;
 using System.Data.SqlClient;
+using RecipeManager.CLI;
 
 namespace Capstone.DAL
 {
@@ -34,6 +35,7 @@ namespace Capstone.DAL
                     cmd.Parameters.AddWithValue("@createDate", CreateDate);
 
                     int rowsAffected = cmd.ExecuteNonQuery();
+
                     cmd = new SqlCommand("SELECT Max(reservation.reservation_id) from reservation;", conn);
                     int reservationConformationId = (int)(cmd.ExecuteScalar());
 
@@ -48,8 +50,6 @@ namespace Capstone.DAL
 
         public decimal CostOfCampground(int campgroundId)
         {
-            
-
             try
             {
                 using (SqlConnection connect = new SqlConnection(connectionString))
@@ -72,5 +72,9 @@ namespace Capstone.DAL
             }
             return dailyFee;
         }
+
+        
+      
+
     }
 }

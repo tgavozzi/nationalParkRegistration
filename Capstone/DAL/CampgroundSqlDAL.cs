@@ -11,7 +11,6 @@ namespace Capstone.DAL
 {
     public class CampgroundSqlDAL
     {
-
         private string connectionString;
         private List<Campground> output = new List<Campground>();
 
@@ -44,7 +43,6 @@ namespace Capstone.DAL
                         c.Daily_fee = Convert.ToInt32(reader["daily_fee"]);
 
                         output.Add(c);
-                       
                     }
                 }
             }
